@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#dfead9">
+<title>Hvad fortæller søvnen os? – Modul 1</title>
+<style>
+:root {
+  --green:#104f25;
+  --green2:#006633;
+  --soft:#c8e1bf;
+  --soft2:#dfead9;
+  --paper:#eef3e9;
+  --panel:#f7f2e8;
+  --orange:#f07f3c;
+  --ink:#203126;
+  --muted:#59665d;
+  --line:#b9c9b5;
+  --focus:#1e6b37;
+}
+*{box-sizing:border-box}
+html{background:var(--soft2)}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  color:var(--ink);
+  background:var(--soft2);
+  line-height:1.65;
+  font-size:20px;
+}
+button,input,textarea{font:inherit}
+.app{
+  max-width:1024px;
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--paper);
+  box-shadow:0 0 28px rgba(16,79,37,.12);
+}
+header{
+  padding:22px 28px 18px;
+  border-bottom:2px solid var(--line);
+  display:flex;
+  gap:18px;
+  align-items:center;
+  background:var(--panel);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.logo{width:64px;height:54px;flex:0 0 auto}
+.logo svg{width:100%;height:100%;display:block}
+.brand small{
+  display:block;color:var(--muted);letter-spacing:.08em;
+  text-transform:uppercase;font-weight:800;font-size:.72rem
+}
+.brand h1{font-size:1.28rem;margin:2px 0 0;color:var(--green);line-height:1.2}
+.mode-badge{
+  margin-left:auto;padding:8px 14px;border-radius:999px;
+  background:var(--soft);color:var(--green);font-weight:800;font-size:.82rem
+}
+.progress-wrap{padding:16px 28px 0}
+.progress-text{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-bottom:7px}
+.progress{height:12px;border-radius:999px;background:#d7e0d3;overflow:hidden;border:1px solid #c6d3c2}
+.progress > div{height:100%;width:0;background:var(--orange);transition:width .25s ease}
+main{padding:28px}
+.card{display:none;max-width:760px;margin:0 auto}
+.card.active{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:.15;transform:translateY(5px)}to{opacity:1;transform:none}}
+.kicker{font-weight:900;color:var(--orange);text-transform:uppercase;letter-spacing:.07em;font-size:.78rem}
+h2{font-size:2rem;line-height:1.2;color:var(--green);margin:.35rem 0 1rem}
+h3{color:var(--green);margin:1.5rem 0 .5rem;font-size:1.2rem}
+p{margin:.75rem 0}
+.lead{font-size:1.1rem}
+.quote{
+  margin:24px 0;padding:22px 24px;border-left:8px solid var(--orange);
+  background:var(--panel);font-weight:900;font-size:1.35rem;color:var(--green);
+  border-radius:0 16px 16px 0
+}
+.box{
+  background:var(--panel);border:2px solid var(--line);border-radius:16px;
+  padding:18px 20px;margin:18px 0
+}
+.box strong{color:var(--green)}
+.check{
+  display:flex;gap:14px;align-items:flex-start;margin:14px 0;padding:17px 18px;
+  border:2px solid var(--line);border-radius:16px;background:#f3f6ef;cursor:pointer
+}
+.check input{width:28px;height:28px;accent-color:var(--green);margin-top:1px;flex:0 0 auto}
+label span{display:block}
+.hint{font-size:.9rem;color:var(--muted);margin-top:3px}
+input[type="text"], input[type="date"], input[type="time"], textarea{
+  width:100%;border:2px solid #9fb29b;border-radius:14px;padding:15px 16px;
+  color:var(--ink);background:#f8f5ed
+}
+textarea{min-height:120px;resize:vertical}
+input:focus, textarea:focus, button:focus{
+  outline:4px solid rgba(30,107,55,.22);outline-offset:2px
+}
+.field{margin:20px 0}
+.field label{font-weight:800;color:var(--green);display:block;margin-bottom:8px}
+.days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.day{border:2px solid var(--line);border-radius:16px;padding:15px;background:#f3f6ef}
+.day label{display:flex;align-items:center;gap:11px;font-weight:800}
+.day input[type="checkbox"]{width:26px;height:26px;accent-color:var(--green)}
+.day input[type="date"]{margin-top:10px;padding:11px}
+.actions{display:flex;gap:14px;justify-content:space-between;margin-top:30px;flex-wrap:wrap}
+button,.btn{
+  border:0;border-radius:999px;padding:15px 24px;font-weight:900;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:56px
+}
+.primary{background:var(--green);color:#fff}
+.primary:disabled{background:#91a392;cursor:not-allowed}
+.secondary{background:#d9e5d5;color:var(--green)}
+.linkbtn{background:var(--orange);color:#fff;margin-top:10px}
+.error{color:#9a3417;font-weight:800;min-height:1.5em;margin-top:10px}
+.notice{font-size:.86rem;color:var(--muted);border-top:2px solid var(--line);padding-top:14px;margin-top:20px}
+.complete{text-align:center;padding:18px 0 8px}
+.complete .tick{width:82px;height:82px;border-radius:50%;background:var(--soft);display:grid;place-items:center;margin:0 auto 18px;font-size:2.4rem;color:var(--green);font-weight:900}
+.summary{text-align:left;background:var(--panel);border-radius:16px;padding:20px;margin-top:20px;border:2px solid var(--line)}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+.mode-card{
+  background:var(--panel);border:3px solid var(--line);border-radius:18px;padding:22px;
+  text-align:left;cursor:pointer
+}
+.mode-card:hover{border-color:var(--green)}
+.mode-card h3{margin-top:0}
+.mode-card p{font-size:.95rem}
+.test-note{background:#fff1e7;border-color:#f3b181}
+footer{
+  padding:16px 28px;border-top:2px solid var(--line);font-size:.76rem;color:var(--muted);
+  display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--panel)
+}
+footer .mini{width:28px;height:24px;display:inline-block;vertical-align:middle}
+.hidden{display:none!important}
+@media (max-width:700px){
+  body{font-size:18px}
+  .days,.mode-grid{grid-template-columns:1fr}
+  h2{font-size:1.65rem}
+  main{padding:22px 18px}
+  header{padding:17px 18px}
+  .progress-wrap{padding:14px 18px 0}
+  .mode-badge{display:none}
+}
+@media print{
+  body{background:#fff}
+  .app{box-shadow:none}
+  header,.progress-wrap,.actions,footer{display:none!important}
+  .card{display:block!important;page-break-after:always}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo"><?xml version="1.0"?><svg fill="#104f25" id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116.75 94.61"><g id="Layer_1-2"><path fill="#85a97c" d="M16.07,76.13c-2.81-.85-5.79-1.04-8.68-1.51-1.2-.2-2.43-.43-3.63-.75-.68,1.99-1.15,4.2-.09,5.16.1.09,1.93.45,2.06.45,1.11,6.19-3.24,11.15-5.1,13.33-.58.69-.13,1.73.77,1.77,1.46.07,2.77,0,4.36-.57,2.7-.98,4.58-2.05,6.58-4.14,1.37-1.44,3.05-3.38,3.93-7.58-.15-1.55,1.49-1.07,1.77-1.18,1.67.36,3.43.69,5.28.95-1.39-3-4.09-4.98-7.25-5.93Z"></path><path fill="#85a97c" d="M22.9,60.5c4.38,1.12,8.83,1.96,13.29,2.68-4.12-4.14-8.4-8.13-12.44-12.32-.94-.97-1.91-1.92-2.92-2.81l-.44-.38c-.65.84-1.31,1.74-2.03,2.73-1.93,2.67-3.32,4.81-4.58,7.05,2.89,1.38,6.03,2.27,9.12,3.06Z"></path><path fill="#85a97c" d="M50.01,78.15c-.75-1.28-1.54-2.54-2.5-3.68-2.37-2.81-4.96-5.44-7.65-7.98-5.93-.8-11.83-1.83-17.57-3.34-2.36-.62-4.82-1.31-7.07-2.31-.64,1.1-1.26,2.26-1.93,3.54,3.48.73,7.04,1.12,10.49,2.08,1.92.53,4.2,1.27,5.23,3.02,1.66.32,3.29.73,4.86,1.34,2.34.92,1.25,2.76,1.51,5.18.13,1.26,2.67,2.15,2.78,3.41.07.77.32,1.46.69,2.11,3.67-.32,7.55-1.11,11.61-2.65-.15-.24-.31-.48-.45-.72Z"></path><path fill="#85a97c" d="M10.71,65.62c.22-.43.43-.84.63-1.24-1.66-.35-3.31-.77-4.91-1.38-1.1-.42-2.3-.88-3.49-1.42-.76,1.54-1.64,3.04-2.26,4.66-.17.45-.42,1.04-.68,1.71,2.18.58,4.45.87,6.67,1.18,3.16.45,6.36.92,9.13,2.62,2.39,1.47,3.9,3.5,4.77,5.82,2.43.27,5,.38,7.68.22-.37-.87-.55-1.79-.6-2.76-.07-1.41.14-2.86-.11-4.26-.09-.49-.26-.92-.49-1.3-3.5-.68-7.12-.96-10.56-1.84-1.96-.5-3.93-1.2-5.79-2.02Z"></path><polygon fill="#006633" points="103.19 8.23 6.74 23.02 5.93 23.18 5.44 24.72 71.11 92.12 71.65 92.65 73.08 92.33 103.92 10.13 104.17 9.39 103.19 8.23"></polygon><path fill="#104f25" d="M116.66,9.76c.2-.21.35-6.06-2.58-8.3-2.97-2.27-15.48-4.3-24,13.66-1,2.11-4.11,2.75-6.37,3.48-6.38,2.08-13.76,2.25-20.58,4.25-1.68.49-4.06,1.14-5.61,1.73-5.06,1.93-9.12,4.72-13.24,8.13-4.54,3.76-6.76,6.52-10.08,11.24-1.84,2.61-2.67,4.07-3.87,6.25l24.29,25.04c17.05-2.17,28.38-15.46,32.99-21.99.07.08.13.16.2.24.64.66,1.41,1.25,2.27,1.8,2.85,1.82,5.95,5.69,7.02,8.49l4.58,12.01c.44.63,1.57.62,1.98-.02,2.99-4.56,8-20.26.75-35.42,0,0-2.5-4.38-7.67-4.86,1.08-2.12,1.86-3.62,1.87-3.62v-.03c1.25-3.61,1.76-6.91,5.04-8.4,4.01-1.82,7.02-4.09,9.18-6.48.38-.42.05-1.09-.51-1.06-2.37.13-5.65-.09-5.9-.71-.51-1.28,5.31-.28,10.22-5.43Z"></path><path fill="#85a97c" d="M85.75,46.17c-.13-.98-.37-1.52-.8-1.81-1.74,7.38-6.08,16.53-14.94,25.24,0,0,8.02-4.42,12.41-9.38,1.57-1.78,3.53-4.26,5.4-6.72-.81-.83-1.4-1.78-1.67-2.96l-.4-4.36Z"></path><path fill="#85a97c" d="M90.5,14.3c-1.35,4.17-9.17,26.74-25.57,43.43-5.37,5.46-10.76,9.24-15.86,11.84l1.97,2.03c6.4-2.51,13.44-6.78,20.45-13.91,17.35-17.65,19.26-42.29,19.31-44.12-.02.11-.1.37-.29.73Z"></path><path fill="#85a97c" d="M65.63,20.31c-18.85.65-31.89,11.14-39.33,25.8l22.77,23.46c5.1-2.6,10.49-6.38,15.86-11.84,16.4-16.69,24.23-39.26,25.57-43.43.14-.44.21-.68.21-.68,0,0-5.79,6.03-25.09,6.69Z"></path><path fill="#85a97c" d="M37.78,34.47s9.98-13.77,31.75-12.21c1.96.14,3.94.08,5.88-.22,3.93-.61,10.09-1.85,12.16-3.91,0,0-10.04,17.39-26.82,18.99-14.19,1.35-22.98-2.65-22.98-2.65Z"></path></g></svg></div>
+  <div class="brand">
+    <small>Steinbeck · interaktivt mikroforløb</small>
+    <h1>Hvad fortæller søvnen os?</h1>
+  </div>
+  <div class="mode-badge" id="modeBadge">Vælg tilstand</div>
+</header>
+
+<div class="progress-wrap hidden" id="progressWrap">
+  <div class="progress-text"><span id="stepLabel">Trin 1 af 7</span><span id="percent">0 %</span></div>
+  <div class="progress"><div id="bar"></div></div>
+</div>
+
+<main>
+<section class="card active" data-step="-1">
+  <div class="kicker">Modul 1 · Hvad ser vi?</div>
+  <h2>Hvordan vil I bruge modulet?</h2>
+  <p class="lead">Vælg testtilstand, når I vil prøve hele forløbet med det samme. Vælg praksistilstand, når stuen skal gennemføre det rigtige forløb over flere dage.</p>
+  <div class="mode-grid">
+    <button class="mode-card test-note" onclick="chooseMode('test')">
+      <h3>Testtilstand</h3>
+      <p>I kan springe observationsdagene over og afprøve hele flowet på få minutter.</p>
+    </button>
+    <button class="mode-card" onclick="chooseMode('practice')">
+      <h3>Praksistilstand</h3>
+      <p>I skal gennemføre mindst tre observationsdage, før modulet kan afsluttes.</p>
+    </button>
+  </div>
+  <p class="notice">Fremdriften gemmes på denne iPad og i denne browser. Brug derfor stuens faste iPad under hele forløbet.</p>
+</section>
+
+<section class="card" data-step="0">
+  <div class="kicker">Trin 1 · Gør klar</div>
+  <h2>Find materialerne frem</h2>
+  <div class="box">
+    <strong>Tid:</strong> cirka 20 minutter nu, derefter mindst 3 observationsdage og en fælles drøftelse på cirka 15 minutter.
+  </div>
+  <label class="check"><input id="haveNeusight" type="checkbox"><span><strong>Det blå Neusight-ark</strong><span class="hint">Læg det på bordet med feltet Fakta synligt.</span></span></label>
+  <label class="check"><input id="haveLog" type="checkbox"><span><strong>Institutions-søvnloggen</strong><span class="hint">Observationsarkene til dag 1–3 og dag 4–6.</span></span></label>
+  <div class="error" id="err0"></div>
+  <div class="actions"><span></span><button class="primary" onclick="nextStep()">Vi har det klar</button></div>
+  <p class="notice">Skriv ikke barnets navn i denne digitale guide. Observationerne bliver på papir i institutionen.</p>
+</section>
+
+<section class="card" data-step="1">
+  <div class="kicker">Trin 2 · Start her</div>
+  <h2>Se først. Forklar bagefter.</h2>
+  <div class="quote">Søvnen fortæller os noget. Vi skal bare se efter.</div>
+  <p>Når et barn er svært at få til at sove, er første skridt ikke at finde en løsning. Første skridt er at samle de brikker, vi mangler.</p>
+  <p>I dette modul arbejder I kun med <strong>Fakta: Hvad ved vi?</strong> Skriv det, I kan se på et ur og med jeres øjne.</p>
+  <label class="check"><input id="introRead" type="checkbox"><span><strong>Vi har læst introduktionen sammen.</strong></span></label>
+  <div class="error" id="err1"></div>
+  <div class="actions"><button class="secondary" onclick="prevStep()">Tilbage</button><button class="primary" onclick="nextStep()">Næste trin</button></div>
+</section>
+
+<section class="card" data-step="2">
+  <div class="kicker">Trin 3 · Få den faglige brik</div>
+  <h2>Læs om døgnrytme og søvnpres</h2>
+  <p>Læs kapitel 1 om døgnrytme og kapitel 2 om søvnpres i <strong>Søvnens Biologi</strong> fra Center for Søvn.</p>
+  <div class="box"><strong>Tid:</strong> cirka 10 minutter.<br><strong>Læg mærke til:</strong> Hvad påvirker tidspunktet, hvor et lille barn bliver træt?</div>
+  <a class="btn linkbtn" target="_blank" rel="noopener" href="https://centerforsoevn.dk/viden-om-soevn/">Åbn materialet fra Center for Søvn</a>
+  <label class="check"><input id="readChapters" type="checkbox"><span><strong>Vi har læst de to kapitler.</strong></span></label>
+  <div class="field">
+    <label for="noticed">Skriv én ting, I lagde mærke til</label>
+    <textarea id="noticed" placeholder="Fx: Vågentiden har betydning for, hvornår barnet er klar til at sove."></textarea>
+  </div>
+  <div class="error" id="err2"></div>
+  <div class="actions"><button class="secondary" onclick="prevStep()">Tilbage</button><button class="primary" onclick="nextStep()">Vi er klar til at observere</button></div>
+</section>
+
+<section class="card" data-step="3">
+  <div class="kicker">Trin 4 · Gør klar</div>
+  <h2>Vælg ét barn og aftal, hvem der skriver</h2>
+  <p>Hele stuen bidrager med det, de ser. Én medarbejder har ansvar for, at det bliver skrevet på institutions-søvnloggen.</p>
+  <label class="check"><input id="childChosen" type="checkbox"><span><strong>Vi har valgt ét barn.</strong><span class="hint">Barnets navn skrives kun på papirarket i institutionen.</span></span></label>
+  <label class="check"><input id="responsibleChosen" type="checkbox"><span><strong>Vi har aftalt, hvem der skriver på loggen.</strong></span></label>
+  <div class="field">
+    <label for="responsible">Ansvarlig medarbejder</label>
+    <input id="responsible" type="text" placeholder="Fornavn eller initialer">
+  </div>
+  <div class="error" id="err3"></div>
+  <div class="actions"><button class="secondary" onclick="prevStep()">Tilbage</button><button class="primary" onclick="nextStep()">Start observationen</button></div>
+</section>
+
+<section class="card" data-step="4">
+  <div class="kicker">Trin 5 · Observer i praksis</div>
+  <h2>Mindst 3 dage. Gerne op til 6.</h2>
+  <p>Udfyld én dag ad gangen på papirarket. Sæt først kryds her, når dagens observation er gennemført.</p>
+  <div class="box"><strong>Skriv kun:</strong> klokkeslæt, det I ser og hører, hvem der putter, og hvor putningen foregår.</div>
+  <div id="testSkipBox" class="box test-note hidden">
+    <strong>Testtilstand:</strong> I kan markere “spring observationsperioden over” for at se resten af modulet med det samme.
+    <label class="check"><input id="skipObservation" type="checkbox"><span><strong>Spring observationsperioden over i testen</strong></span></label>
+  </div>
+  <div class="days" id="days"></div>
+  <p id="dayCount" class="hint">0 observationsdage gennemført. Mindst 3 kræves.</p>
+  <div class="error" id="err4"></div>
+  <div class="actions"><button class="secondary" onclick="prevStep()">Tilbage</button><button class="primary" onclick="nextStep()">Se efter mønstre</button></div>
+  <p class="notice">I kan lukke siden og vende tilbage senere. Brug den samme iPad og den samme browser.</p>
+</section>
+
+<section class="card" data-step="5">
+  <div class="kicker">Trin 6 · Se tilbage</div>
+  <h2>Hvad ved vi nu?</h2>
+  <p>Læg observationsarkene ved siden af hinanden. Tal sammen, og skriv korte svar.</p>
+  <div class="field">
+    <label for="newKnowledge">Hvad ved vi nu, som vi ikke vidste før?</label>
+    <textarea id="newKnowledge"></textarea>
+  </div>
+  <div class="field">
+    <label for="patterns">Hvad ser ud til at gentage sig?</label>
+    <textarea id="patterns"></textarea>
+  </div>
+  <div class="field">
+    <label for="unknown">Hvad ved vi stadig ikke?</label>
+    <textarea id="unknown"></textarea>
+  </div>
+  <div class="error" id="err5"></div>
+  <div class="actions"><button class="secondary" onclick="prevStep()">Tilbage</button><button class="primary" onclick="nextStep()">Klar til drøftelsen</button></div>
+</section>
+
+<section class="card" data-step="6">
+  <div class="kicker">Trin 7 · Drøftelse 1</div>
+  <h2>Aftal 15 minutter sammen</h2>
+  <p>Den person, der leder samtalen, bruger <strong>Facilitatorguide – Drøftelse 1: Hvad ved vi nu?</strong></p>
+  <div class="field">
+    <label for="meetingDate">Dato</label>
+    <input id="meetingDate" type="date">
+  </div>
+  <div class="field">
+    <label for="meetingTime">Tidspunkt</label>
+    <input id="meetingTime" type="time">
+  </div>
+  <label class="check"><input id="meetingAgreed" type="checkbox"><span><strong>Vi har aftalt, hvem der faciliterer drøftelsen.</strong></span></label>
+  <div class="box"><strong>Stop her:</strong> I skal ikke vælge en løsning endnu. Tag søvnloggen og jeres tre svar med til drøftelsen.</div>
+  <div class="error" id="err6"></div>
+  <div class="actions"><button class="secondary" onclick="prevStep()">Tilbage</button><button class="primary" onclick="finish()">Afslut modul 1</button></div>
+</section>
+
+<section class="card" data-step="7">
+  <div class="complete">
+    <div class="tick">✓</div>
+    <div class="kicker">Modul 1 gennemført</div>
+    <h2>I har samlet brikkerne</h2>
+    <p>I har arbejdet med fakta og gjort klar til den fælles drøftelse.</p>
+    <div class="summary" id="summary"></div>
+    <div class="actions"><button class="secondary" onclick="window.print()">Udskriv opsamling</button><button class="primary" onclick="resetAll()">Start forfra</button></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span><span class="mini"><?xml version="1.0"?><svg fill="#104f25" id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116.75 94.61"><g id="Layer_1-2"><path fill="#85a97c" d="M16.07,76.13c-2.81-.85-5.79-1.04-8.68-1.51-1.2-.2-2.43-.43-3.63-.75-.68,1.99-1.15,4.2-.09,5.16.1.09,1.93.45,2.06.45,1.11,6.19-3.24,11.15-5.1,13.33-.58.69-.13,1.73.77,1.77,1.46.07,2.77,0,4.36-.57,2.7-.98,4.58-2.05,6.58-4.14,1.37-1.44,3.05-3.38,3.93-7.58-.15-1.55,1.49-1.07,1.77-1.18,1.67.36,3.43.69,5.28.95-1.39-3-4.09-4.98-7.25-5.93Z"></path><path fill="#85a97c" d="M22.9,60.5c4.38,1.12,8.83,1.96,13.29,2.68-4.12-4.14-8.4-8.13-12.44-12.32-.94-.97-1.91-1.92-2.92-2.81l-.44-.38c-.65.84-1.31,1.74-2.03,2.73-1.93,2.67-3.32,4.81-4.58,7.05,2.89,1.38,6.03,2.27,9.12,3.06Z"></path><path fill="#85a97c" d="M50.01,78.15c-.75-1.28-1.54-2.54-2.5-3.68-2.37-2.81-4.96-5.44-7.65-7.98-5.93-.8-11.83-1.83-17.57-3.34-2.36-.62-4.82-1.31-7.07-2.31-.64,1.1-1.26,2.26-1.93,3.54,3.48.73,7.04,1.12,10.49,2.08,1.92.53,4.2,1.27,5.23,3.02,1.66.32,3.29.73,4.86,1.34,2.34.92,1.25,2.76,1.51,5.18.13,1.26,2.67,2.15,2.78,3.41.07.77.32,1.46.69,2.11,3.67-.32,7.55-1.11,11.61-2.65-.15-.24-.31-.48-.45-.72Z"></path><path fill="#85a97c" d="M10.71,65.62c.22-.43.43-.84.63-1.24-1.66-.35-3.31-.77-4.91-1.38-1.1-.42-2.3-.88-3.49-1.42-.76,1.54-1.64,3.04-2.26,4.66-.17.45-.42,1.04-.68,1.71,2.18.58,4.45.87,6.67,1.18,3.16.45,6.36.92,9.13,2.62,2.39,1.47,3.9,3.5,4.77,5.82,2.43.27,5,.38,7.68.22-.37-.87-.55-1.79-.6-2.76-.07-1.41.14-2.86-.11-4.26-.09-.49-.26-.92-.49-1.3-3.5-.68-7.12-.96-10.56-1.84-1.96-.5-3.93-1.2-5.79-2.02Z"></path><polygon fill="#006633" points="103.19 8.23 6.74 23.02 5.93 23.18 5.44 24.72 71.11 92.12 71.65 92.65 73.08 92.33 103.92 10.13 104.17 9.39 103.19 8.23"></polygon><path fill="#104f25" d="M116.66,9.76c.2-.21.35-6.06-2.58-8.3-2.97-2.27-15.48-4.3-24,13.66-1,2.11-4.11,2.75-6.37,3.48-6.38,2.08-13.76,2.25-20.58,4.25-1.68.49-4.06,1.14-5.61,1.73-5.06,1.93-9.12,4.72-13.24,8.13-4.54,3.76-6.76,6.52-10.08,11.24-1.84,2.61-2.67,4.07-3.87,6.25l24.29,25.04c17.05-2.17,28.38-15.46,32.99-21.99.07.08.13.16.2.24.64.66,1.41,1.25,2.27,1.8,2.85,1.82,5.95,5.69,7.02,8.49l4.58,12.01c.44.63,1.57.62,1.98-.02,2.99-4.56,8-20.26.75-35.42,0,0-2.5-4.38-7.67-4.86,1.08-2.12,1.86-3.62,1.87-3.62v-.03c1.25-3.61,1.76-6.91,5.04-8.4,4.01-1.82,7.02-4.09,9.18-6.48.38-.42.05-1.09-.51-1.06-2.37.13-5.65-.09-5.9-.71-.51-1.28,5.31-.28,10.22-5.43Z"></path><path fill="#85a97c" d="M85.75,46.17c-.13-.98-.37-1.52-.8-1.81-1.74,7.38-6.08,16.53-14.94,25.24,0,0,8.02-4.42,12.41-9.38,1.57-1.78,3.53-4.26,5.4-6.72-.81-.83-1.4-1.78-1.67-2.96l-.4-4.36Z"></path><path fill="#85a97c" d="M90.5,14.3c-1.35,4.17-9.17,26.74-25.57,43.43-5.37,5.46-10.76,9.24-15.86,11.84l1.97,2.03c6.4-2.51,13.44-6.78,20.45-13.91,17.35-17.65,19.26-42.29,19.31-44.12-.02.11-.1.37-.29.73Z"></path><path fill="#85a97c" d="M65.63,20.31c-18.85.65-31.89,11.14-39.33,25.8l22.77,23.46c5.1-2.6,10.49-6.38,15.86-11.84,16.4-16.69,24.23-39.26,25.57-43.43.14-.44.21-.68.21-.68,0,0-5.79,6.03-25.09,6.69Z"></path><path fill="#85a97c" d="M37.78,34.47s9.98-13.77,31.75-12.21c1.96.14,3.94.08,5.88-.22,3.93-.61,10.09-1.85,12.16-3.91,0,0-10.04,17.39-26.82,18.99-14.19,1.35-22.98-2.65-22.98-2.65Z"></path></g></svg></span> Designet af Steinbeck · 2026</span>
+  <span>iPad-prototype · data gemmes lokalt</span>
+</footer>
+</div>
+
+<script>
+const totalSteps=7;
+let mode=localStorage.getItem('sleepModuleV2Mode')||'';
+let current=Number(localStorage.getItem('sleepModuleV2Step')||-1);
+if(!mode) current=-1;
+if(current<-1||current>7) current=-1;
+
+const ids=['haveNeusight','haveLog','introRead','readChapters','noticed','childChosen','responsibleChosen','responsible',
+'newKnowledge','patterns','unknown','meetingDate','meetingTime','meetingAgreed','skipObservation'];
+for(let i=1;i<=6;i++) ids.push('day'+i,'date'+i);
+
+function buildDays(){
+  const wrap=document.getElementById('days');
+  for(let i=1;i<=6;i++){
+    const d=document.createElement('div');
+    d.className='day';
+    d.innerHTML=`<label><input type="checkbox" id="day${i}"> Dag ${i} gennemført</label>
+      <input type="date" id="date${i}" aria-label="Dato for dag ${i}">`;
+    wrap.appendChild(d);
+  }
+}
+buildDays();
+
+function chooseMode(selected){
+  mode=selected;
+  current=0;
+  localStorage.setItem('sleepModuleV2Mode',mode);
+  localStorage.setItem('sleepModuleV2Step','0');
+  showStep();
+}
+
+function save(){
+  const data={};
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    data[id]=el.type==='checkbox'?el.checked:el.value;
+  });
+  localStorage.setItem('sleepModuleV2Data',JSON.stringify(data));
+  localStorage.setItem('sleepModuleV2Step',String(current));
+  localStorage.setItem('sleepModuleV2Mode',mode);
+  updateDayCount();
+}
+
+function load(){
+  const data=JSON.parse(localStorage.getItem('sleepModuleV2Data')||'{}');
+  Object.entries(data).forEach(([id,val])=>{
+    const el=document.getElementById(id);
+    if(el) el.type==='checkbox'?el.checked=Boolean(val):el.value=val;
+  });
+  updateDayCount();
+}
+
+function showStep(){
+  document.querySelectorAll('.card').forEach(c=>c.classList.toggle('active',Number(c.dataset.step)===current));
+  const progressWrap=document.getElementById('progressWrap');
+  const badge=document.getElementById('modeBadge');
+  if(current===-1){
+    progressWrap.classList.add('hidden');
+    badge.textContent='Vælg tilstand';
+  } else {
+    progressWrap.classList.remove('hidden');
+    badge.textContent=mode==='test'?'Testtilstand':'Praksistilstand';
+    const shown=Math.min(current+1,totalSteps);
+    document.getElementById('stepLabel').textContent=current===7?'Færdig':`Trin ${shown} af ${totalSteps}`;
+    const pct=current===7?100:Math.round(current/totalSteps*100);
+    document.getElementById('percent').textContent=pct+' %';
+    document.getElementById('bar').style.width=pct+'%';
+  }
+  document.getElementById('testSkipBox').classList.toggle('hidden',mode!=='test');
+  localStorage.setItem('sleepModuleV2Step',String(current));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function val(id){return document.getElementById(id).value.trim()}
+function checked(id){return document.getElementById(id).checked}
+function setErr(step,msg){document.getElementById('err'+step).textContent=msg}
+function dayTotal(){
+  let n=0;for(let i=1;i<=6;i++) if(checked('day'+i)) n++; return n;
+}
+function updateDayCount(){
+  const el=document.getElementById('dayCount');
+  if(!el) return;
+  if(mode==='test' && checked('skipObservation')) {
+    el.textContent='Observationsperioden springes over i testtilstand.';
+  } else {
+    el.textContent=`${dayTotal()} observationsdage gennemført. Mindst 3 kræves.`;
+  }
+}
+
+function validate(step){
+  setErr(step,'');
+  if(step===0 && !(checked('haveNeusight')&&checked('haveLog')))
+    return setErr(0,'Sæt kryds ved begge materialer, før I går videre.'),false;
+  if(step===1 && !checked('introRead'))
+    return setErr(1,'Bekræft, at I har læst introduktionen sammen.'),false;
+  if(step===2 && (!checked('readChapters')||val('noticed').length<8))
+    return setErr(2,'Læs kapitlerne og skriv mindst én kort faglig pointe.'),false;
+  if(step===3 && (!checked('childChosen')||!checked('responsibleChosen')||val('responsible').length<1))
+    return setErr(3,'Vælg barnet, aftal ansvaret og skriv den ansvarliges navn eller initialer.'),false;
+  if(step===4 && !(mode==='test' && checked('skipObservation')) && dayTotal()<3)
+    return setErr(4,'I skal gennemføre mindst tre observationsdage, før I går videre.'),false;
+  if(step===5 && (val('newKnowledge').length<8||val('patterns').length<8||val('unknown').length<3))
+    return setErr(5,'Skriv et kort svar i alle tre felter.'),false;
+  if(step===6 && (!val('meetingDate')||!val('meetingTime')||!checked('meetingAgreed')))
+    return setErr(6,'Aftal dato, tidspunkt og hvem der faciliterer.'),false;
+  return true;
+}
+
+function nextStep(){
+  if(!validate(current)) return;
+  save(); current++; showStep();
+}
+function prevStep(){
+  save();
+  current=Math.max(-1,current-1);
+  if(current===-1) mode='';
+  showStep();
+}
+function finish(){
+  if(!validate(6)) return;
+  save();
+  const dates=[];
+  for(let i=1;i<=6;i++) if(checked('day'+i)) dates.push(val('date'+i)||`dag ${i}`);
+  const obsText=(mode==='test' && checked('skipObservation'))?'Sprunget over i testtilstand':(dates.join(', ')||'Ingen datoer angivet');
+  document.getElementById('summary').innerHTML=`
+    <strong>Tilstand:</strong> ${mode==='test'?'Test':'Praksis'}<br>
+    <strong>Observationer:</strong> ${escapeHtml(obsText)}<br>
+    <strong>Ansvarlig:</strong> ${escapeHtml(val('responsible'))}<br>
+    <strong>Drøftelse:</strong> ${escapeHtml(val('meetingDate'))} kl. ${escapeHtml(val('meetingTime'))}<br><br>
+    <strong>Det ved vi nu:</strong><br>${escapeHtml(val('newKnowledge'))}<br><br>
+    <strong>Det ser ud til at gentage sig:</strong><br>${escapeHtml(val('patterns'))}<br><br>
+    <strong>Det ved vi stadig ikke:</strong><br>${escapeHtml(val('unknown'))}`;
+  current=7; save(); showStep();
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function resetAll(){
+  if(!confirm('Vil I slette hele fremdriften og starte forfra?')) return;
+  localStorage.removeItem('sleepModuleV2Data');
+  localStorage.removeItem('sleepModuleV2Step');
+  localStorage.removeItem('sleepModuleV2Mode');
+  location.reload();
+}
+document.addEventListener('input',save);
+document.addEventListener('change',save);
+load();
+showStep();
+if(current===7){
+  current=6;
+  finish();
+}
+</script>
+</body>
+</html>
